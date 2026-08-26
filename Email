@@ -1,0 +1,64 @@
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+import numpy as np
+print("Hi")
+#Load CSV File
+df=pd.read_csv("C:/Users/user/Downloads/email_data.csv")
+print("Hello")
+#Prints First Five rows
+print(df.head())
+print("Finished")
+#Prints the names of the columns
+print(df.columns)
+#Type of each column
+print(df.dtypes)
+#gives information of the file
+df.info()
+#Data Transformation
+df["Date"]=pd.to_datetime(df["Date"],dayfirst=True)
+df["Year"]=df["Date"].dt.year
+df["Month"]=df["Date"].dt.month
+df["Day"]=df["Date"].dt.day
+df["Day_Name"]=df["Date"].dt.day_name()
+print(df[["Date","Year","Month","Day_Name"]])
+#Missing Values
+print(df.isnull().sum())
+df["Sender"]=df["Sender"].fillna("Unknown")
+print(df.isnull().sum())
+print(df.duplicated().sum())
+#Removing Duplicates
+df=df.drop_duplicates()
+print(df.duplicated().sum())
+print(df[["Date","Category"]].head(10))
+#Standardize Text
+df["Category"]=df["Category"].str.strip().str.title()
+print(df[["Date","Category"]].head(10))
+print(df[df["Words"]<0])
+print(df[df["Words"]>=0])
+#Statistical values
+print(df.describe())
+print(df["Words"].mean())
+print(df["Words"].median())
+print(df["Category"].mode())
+print(df["Words"].std())
+print(df.head())
+#Data Refactoring
+df=df.rename(columns={"Words":"Words_count",
+"Size_KB":"Email_Size_KB"})
+df=df[["Date","Category","Words_count","Attachments","Email_Size_KB"]]
+print(df.head())
+print(df["Category"].value_counts())
+#Plot of email categories
+df["Category"].value_counts().plot(kind="bar",color="pink")
+plt.title("Emails by Category")
+plt.xlabel("Category")
+plt.ylabel("Number of Emails")
+plt.show()
+print(df["Date"].value_counts())
+sns.countplot(data=df,x="Date")
+plt.title("Emails by Day of Week")
+plt.xticks(rotation=45)
+plt.show()
+#Correlation Analysis
+print(df[["Words","Category"]].corr())
